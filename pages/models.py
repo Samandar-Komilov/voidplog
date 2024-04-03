@@ -13,7 +13,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255, blank=False)
     subtitle = models.CharField(max_length=255, blank=False)
     text = models.TextField() # CKeditor will be added
-    image = models.ImageField(upload_to='post-images')
+    image = models.ImageField(upload_to='post-images', default='default.png', blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True)
