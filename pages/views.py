@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render, HttpResponse
 from django.views import View
 from .models import Post
+from .forms import PostCreateForm
 
 
 class HomeView(View):
@@ -34,3 +35,19 @@ class ContactView(View):
     template = "contact.html"
     def get(self, request):
         return render(request, template_name=self.template)
+    
+
+# CRUD for Posts
+
+class PostCreateView(View):
+    template = "post/post_create.html"
+    form = PostCreateForm()
+    def get(self, request):
+        return render(request, template_name=self.template, context={'form':self.form})
+    def post(self, request):
+        form = PostCreateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+        else:
+            return HttpResponse("Your credentials are wrong!")
