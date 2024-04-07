@@ -1,8 +1,8 @@
-from django.shortcuts import redirect, render, HttpResponse
+from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post
-from .forms import PostCreateForm
+from .forms import PostCreateForm, PostEditForm
 
 
 class HomeView(View):
@@ -55,3 +55,18 @@ class PostCreateView(LoginRequiredMixin, View):
         else:
             form = PostCreateForm()
         return render(request, 'post/post_create.html', {'form':form})
+
+
+class PostEditView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        form = PostEditForm(instance=post)
+        return render(request, 'post/edit.html', {'form': form})
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        form = PostEditForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('post-detail', pk=pk)
+        return render(request, 'post/edit.html', {'form': form})
