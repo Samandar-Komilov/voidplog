@@ -29,6 +29,12 @@
                 <p>
                     {{post.text}}
                 </p>
+                {% if request.user.is_authenticated %}
+                <div style="display: flex;">
+                    <a class="nav-link px-lg-3 py-3 py-lg-4" href="#" style="color: blue !important; font-family: Ubuntu;"><i>Edit<i></a>
+                    <a class="nav-link px-lg-3 py-3 py-lg-4" href="#" style="color: red !important; font-family: Ubuntu;"><i>Delete<i></a>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

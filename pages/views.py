@@ -1,12 +1,13 @@
 from django.shortcuts import redirect, render, HttpResponse
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post
 from .forms import PostCreateForm
 
 
 class HomeView(View):
     template = "index.html"
-    posts = Post.objects.all().order_by('-created_at')[:3]
+    posts = Post.objects.all().order_by('-created_at')[0:3]
     context = {
         'posts':posts
     }
@@ -39,7 +40,7 @@ class ContactView(View):
 
 # CRUD for Posts
 
-class PostCreateView(View):
+class PostCreateView(LoginRequiredMixin, View):
     template = "post/post_create.html"
     form = PostCreateForm()
     def get(self, request):
@@ -47,7 +48,10 @@ class PostCreateView(View):
     def post(self, request):
         form = PostCreateForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('/')
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            return redirect('post-detail', pk=post.id)
         else:
-            return HttpResponse("Your credentials are wrong!")
+            form = PostCreateForm()
+        return render(request, 'post/post_create.html', {'form':form})
