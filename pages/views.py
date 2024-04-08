@@ -60,6 +60,7 @@ class PostCreateView(LoginRequiredMixin, View):
 class PostEditView(LoginRequiredMixin, View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
+        # We are giving the values from database just to not create the post again, but change some parts
         form = PostEditForm(instance=post)
         return render(request, 'post/edit.html', {'form': form})
 
@@ -70,3 +71,10 @@ class PostEditView(LoginRequiredMixin, View):
             form.save()
             return redirect('post-detail', pk=pk)
         return render(request, 'post/edit.html', {'form': form})
+    
+
+class PostDeleteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        post.delete()
+        return redirect('/')

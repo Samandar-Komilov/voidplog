@@ -32,7 +32,10 @@
                 {% if request.user.is_authenticated %}
                 <div style="display: flex;">
                     <a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url "post_edit" post.id %}" style="color: blue !important; font-family: Ubuntu;"><i>Edit<i></a>
-                    <a class="nav-link px-lg-3 py-3 py-lg-4" href="#" style="color: red !important; font-family: Ubuntu;"><i>Delete<i></a>
+                    <form method="POST" action="{% url "post_delete" post.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
                 </div>
                 {% endif %}
             </div>
