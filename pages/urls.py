@@ -9,5 +9,6 @@ urlpatterns = [
     path('contact/', views.ContactView.as_view(), name='contact'),
     path('create/', views.PostCreateView.as_view(), name='post_create'),
     path('edit/<int:pk>', views.PostEditView.as_view(), name='post_edit'),
-    path('delete/<int:pk>', views.PostDeleteView.as_view(), name='post_delete')
+    path('delete/<int:pk>', views.PostDeleteView.as_view(), name='post_delete'),
+    path('posts/<int:pk>/comments/create/', views.CommentCreateView.as_view(), name='comment_create')
 ]

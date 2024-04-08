@@ -1,8 +1,8 @@
 from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Post
-from .forms import PostCreateForm, PostEditForm
+from .models import Post, Comment
+from .forms import PostCreateForm, PostEditForm, CommentCreateForm
 
 
 class HomeView(View):
@@ -26,8 +26,12 @@ class PostView(View):
     template = "post-detail.html"
     def get(self, request, pk):
         post = Post.objects.get(pk=pk)
+        comments = Comment.objects.filter(post=post)
+        form = CommentCreateForm()
         context = {
-            'post':post
+            'post':post,
+            'comments':comments,
+            'form': form
         }
         return render(request, template_name=self.template, context=context)
     
@@ -78,3 +82,15 @@ class PostDeleteView(LoginRequiredMixin, View):
         post = get_object_or_404(Post, pk=pk)
         post.delete()
         return redirect('/')
+    
+
+class CommentCreateView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        form = CommentCreateForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            return redirect('post-detail', pk=pk)
